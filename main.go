@@ -4,10 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"net"
-	"time"
-	"sync"
 	"os"
-	"os/signal"
+	"sync"
+	"time"
 )
 
 var (
@@ -109,16 +108,17 @@ func main() {
 	pc = make(chan bool)
 	ec = make(chan bool)
 	lc = make(chan bool)
+	c := make(chan os.Signal, 1)
 
 	pack = make([]byte, Size)
 	for i, _ := range pack {
 		pack[i] = 'x'
 	}
-	
+
 	go status()
 	go startAll()
 
-	<-signal.Incoming
+	<-c
 	quit <- true
 	wg.Wait()
 }
